@@ -31,17 +31,23 @@ function App() {
   // this is the function to set the value that is to be displayed in the textArea
   const getText = (str: string): void => {
     // to set the string in the state to just showcase in the input box
+    // to clear the showed string when some operator is being pressed
     if (
       str === "+" ||
       str === "X" ||
       str === "-" ||
       str === "/" ||
-      str === "AC"
+      str === "AC" || 
+      str === '%'
     ) {
       setKeyVal("");
-    } else if (str == "C") {
+    } 
+    // to clear the last inputed elem when the C is being pressed
+    else if (str == "C") {
       setKeyVal(keyVal.slice(0, keyVal.length - 1));
-    } else setKeyVal(keyVal + str);
+    } 
+    // to clear the showed string
+    else setKeyVal(keyVal + str);
   };
 
   // this is the function to actually handle the global array
@@ -54,7 +60,8 @@ function App() {
       displayText.charAt(displayText.length - 1) != "-" &&
       displayText.charAt(displayText.length - 1) != "*" &&
       displayText.charAt(displayText.length - 1) != "/" &&
-      displayText.charAt(displayText.length - 1) != "."
+      displayText.charAt(displayText.length - 1) != "." &&
+      displayText.charAt(displayText.length - 1) != '%'
     )
       setDisplayText(displayText + "*");
     // if the curr and the last input is both operator or decimal then
@@ -63,8 +70,9 @@ function App() {
         displayText.charAt(displayText.length - 1) === "-" ||
         displayText.charAt(displayText.length - 1) === "*" ||
         displayText.charAt(displayText.length - 1) === "/" ||
-        displayText.charAt(displayText.length - 1) === ".") &&
-      (str === "+" || str === "-" || str === "X" || str === "/" || str === ".")
+        displayText.charAt(displayText.length - 1) === "." || 
+        displayText.charAt(displayText.length - 1) === "%") &&
+      (str === "+" || str === "-" || str === "X" || str === "/" || str === "." || str === "%")
     )
       setDisplayText(displayText);
     // to check if the current btn is 'C'
@@ -78,7 +86,7 @@ function App() {
 
   // if use clicks on the equal button
   const onEquals = () => {
-    setKeyVal(eval(displayText))
+    setKeyVal(String(eval(displayText)))
   };
 
   return (
