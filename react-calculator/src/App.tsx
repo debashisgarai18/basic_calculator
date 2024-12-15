@@ -26,67 +26,50 @@ const arr: Array<string> = [
 ];
 function App() {
   const [keyVal, setKeyVal] = useState<string>("");
-  const [displayText, setDisplayText] = useState<string>("");
+
+  const checkOperator = (str: string) => {
+    if (
+      str === "+" ||
+      str === "-" ||
+      str === "X" ||
+      str === "%" ||
+      str === "/" ||
+      str === "."
+    )
+      return true;
+    return false;
+  };
 
   // this is the function to set the value that is to be displayed in the textArea
   const getText = (str: string): void => {
     // to set the string in the state to just showcase in the input box
     // to clear the showed string when some operator is being pressed
-    if (
-      str === "+" ||
-      str === "X" ||
-      str === "-" ||
-      str === "/" ||
-      str === "AC" || 
-      str === '%'
-    ) {
-      setKeyVal("");
-    } 
     // to clear the last inputed elem when the C is being pressed
-    else if (str == "C") {
-      setKeyVal(keyVal.slice(0, keyVal.length - 1));
-    } 
+    if (str === "C") {
+      setKeyVal(keyVal.slice(0, -1));
+    } else if (str === "AC") {
+      setKeyVal("");
+    }
     // to clear the showed string
-    else setKeyVal(keyVal + str);
-  };
-
-  // this is the function to actually handle the global array
-  const getGlobalText = (str: string): void => {
-    // few checks
-    // if the current btn is 'X', then it should be '*'
-    if (
-      str === "X" &&
-      displayText.charAt(displayText.length - 1) != "+" &&
-      displayText.charAt(displayText.length - 1) != "-" &&
-      displayText.charAt(displayText.length - 1) != "*" &&
-      displayText.charAt(displayText.length - 1) != "/" &&
-      displayText.charAt(displayText.length - 1) != "." &&
-      displayText.charAt(displayText.length - 1) != '%'
-    )
-      setDisplayText(displayText + "*");
-    // if the curr and the last input is both operator or decimal then
-    else if (
-      (displayText.charAt(displayText.length - 1) === "+" ||
-        displayText.charAt(displayText.length - 1) === "-" ||
-        displayText.charAt(displayText.length - 1) === "*" ||
-        displayText.charAt(displayText.length - 1) === "/" ||
-        displayText.charAt(displayText.length - 1) === "." || 
-        displayText.charAt(displayText.length - 1) === "%") &&
-      (str === "+" || str === "-" || str === "X" || str === "/" || str === "." || str === "%")
-    )
-      setDisplayText(displayText);
-    // to check if the current btn is 'C'
-    else if (str === "C")
-      setDisplayText(displayText.slice(0, displayText.length - 1));
-    // to check if the current btn is 'AC'
-    else if (str === "AC") setDisplayText("");
-    // to set btn string to the final string
-    else setDisplayText(displayText + str);
+    else {
+      if (checkOperator(str) && checkOperator(keyVal.slice(-1))) {
+        setKeyVal(keyVal + "");
+      } else {
+        if (str === "00" || str === "0") {
+          if (keyVal.slice(-1) === "" || checkOperator(keyVal.slice(-1)))
+            setKeyVal(keyVal + "");
+          else setKeyVal(keyVal + str);
+        } else {
+          setKeyVal(keyVal + str);
+        }
+      }
+    }
   };
 
   // if use clicks on the equal button
   const onEquals = () => {
-    setKeyVal(String(eval(displayText)))
+    const res = String(eval(keyVal.replace("X", "*")));
+    setKeyVal(res);
   };
 
   return (
@@ -97,9 +80,7 @@ function App() {
           <div className="backdrop-blur-lg">
             <textarea
               className="h-[5.5rem] w-[99%] text-4xl rounded-lg shadow-lg px-3"
-              value={
-                keyVal
-              }
+              value={keyVal}
             />
             <div className="grid grid-cols-4 w-full gap-3 mt-5">
               {arr.map((e, idx) => (
@@ -111,12 +92,7 @@ function App() {
                   }
                   key={idx}
                 >
-                  <Buttons
-                    val={e}
-                    display={getText}
-                    getResult={onEquals}
-                    textForArray={getGlobalText}
-                  />
+                  <Buttons val={e} display={getText} getResult={onEquals} />
                 </div>
               ))}
             </div>
